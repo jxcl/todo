@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<title>Tictail Todo</title>
+		<link rel="stylesheet" href="static/css/bootstrap.css" />
+		<link rel="stylesheet" href="static/css/main.css" />
+		<script src="static/js/jquery-2.1.3.js"></script>
+		<script src="static/js/react-0.13.1.js"></script>
+		<script src="static/js/JSXTransformer-0.13.1.js"></script>
+		<script src="static/js/bootstrap.js"></script>
+	</head>
+	<body>
+		<script type="text/jsx">
+			var TodoBox = React.createClass({
+				getInitialState: function() {
+					return {data: []};
+				},
+				loadCommentsFromServer: function() {
+					$.ajax({
+						url: this.props.url,
+						dataType: 'json',
+						success: function(data) {
+							this.setState({data: data["tasks"]});
+						}.bind(this),
+						error: function(data) {
+							console.error(this.props.url, status, err.toString());
+						}.bind(this)
+					});
+				},
+				componentDidMount: function() {
+					this.loadCommentsFromServer();
+				},
+				render: function() {
+					return (
+						<div id="todo-box">
+							<h1 id="todo-header">Todos</h1>
+							<TodoInput />
+							<TodoList data={this.state.data} />
+						</div>
+						);
+				}
+			})
+
+			var TodoInput = React.createClass({
+				render: function() {
+					return (
+						<div id="todo-input">
+							<div id="todo-input-box">
+								<input type="text" className="form-control" id="todo-input-box" placeholder="What needs to be done?" />
+							</div>
+							<div id="todo-input-button">
+								<button id="todo-input-button" className="btn">Add Todo</button>
+							</div>
+						</div>
+					);
+				}
+			});
+
+			var TodoList = React.createClass({
+				render: function() {
+					if (this.props.data.length > 0) {
+						var taskNodes = this.props.data.map(function (item) {
+							return (
+								<TodoItem task={item["task"]} key={item["id"]} />
+							);
+						});
+					}
+					return (
+						<div id="todo-list">
+							{taskNodes}
+						</div>
+						);
+				}
+			});
+
+			var TodoItem = React.createClass({
+				render: function() {
+					return (
+						<div className="todo-item">
+							<div className="todo-checkbox">
+								<input type="checkbox"/>
+							</div>
+							<div className="todo-task">
+								{this.props.task}
+							</div>
+						</div>
+					)
+				}
+			});
+
+			React.render(
+				<TodoBox url="/tasks/" />,
+				document.getElementById('content')
+			);
+		</script>
+		<div id="content">
+
+		</div>
+
+	</body>
+</html>
