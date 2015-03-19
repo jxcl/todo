@@ -1,2 +1,4 @@
 TictailHack2.2/
 tictail-venv/
+__pycache__/
+todo.db
