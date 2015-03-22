@@ -114,12 +114,11 @@ body {
     padding-bottom: 20px;
     margin: 0px;
     text-align: center;
-    border-bottom: 2px dashed #e4e4e4;
     border-bottom: 1px dashed #d2d0d0;
 }
 
-#todo-input {
-    padding: 20px;
+div#todo-input {
+    margin: 20px;
 }
 
 div#todo-input-box {
@@ -139,6 +138,43 @@ button#todo-input-button {
 
 .todo-item {
     padding: 20px;
+}
+
+
+.todo-checkbox {
+    width: 20px;
+    margin-right: 5px;
+    float: left;
+}
+
+.todo-item:nth-child(odd) {
+    background-color: #f4f7fa;
+}
+
+div.clear {
+    clear: both;
+}
+
+.complete {
+    text-decoration: line-through;
+    color: #999999;
+}
+
+#todo-footer {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top: 1px dashed #d2d0d0;
+}
+
+#items-left {
+    margin-left: 20px;
+    float: left;
+    color: #999999;
+}
+
+#mark-complete {
+    margin-right: 20px;
+    float: right;
 }
 
 /* ==========================================================================
