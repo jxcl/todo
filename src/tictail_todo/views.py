@@ -3,13 +3,7 @@ from flask import json, request, render_template, abort
 
 from . import app, models, db
 
-@app.route("/")
-def index():
-    """Serve javascript and css template."""
-    return render_template("index.html")
-
-@app.route("/tasks/", methods=["GET"])
-def tasks_get():
+def list_tasks():
     """Return a JSON object of all tasks present in the database."""
     tasks = models.Task.query.order_by(models.Task.ordering).all()
 
@@ -18,6 +12,16 @@ def tasks_get():
 
     return json.jsonify({"tasks": task_list})
 
+@app.route("/")
+def index():
+    """Serve javascript and css template."""
+    return render_template("index.html")
+
+@app.route("/tasks/", methods=["GET"])
+def tasks_get():
+    """Return a JSON object of all tasks present in the database."""
+    return list_tasks()
+
 @app.route("/tasks/", methods=["PUT"])
 def tasks_update():
     """Accept a subset of all tasks in the database and update them with new params."""
@@ -25,7 +29,7 @@ def tasks_update():
     request_json = request.get_json()
 
     for task_data in request_json["tasks"]:
-        task = models.Task.get(task_data["id"])
+        task = models.Task.query.get(task_data["id"])
         if task == None:
             db.session.rollback()
             response = json.jsonify({"message": 'No task with id {}.'.format(task_data["id"])})
@@ -41,7 +45,8 @@ def tasks_update():
         db.session.add(task)
 
     db.session.commit()
-    return json.jsonify({"message": "ok"})
+
+    return list_tasks()
 
 @app.route("/tasks/", methods=["POST"])
 def new_task():
@@ -52,3 +57,5 @@ def new_task():
 
     db.session.add(task)
     db.session.commit()
+
+    return list_tasks()
