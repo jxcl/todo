@@ -55,6 +55,14 @@ var TodoBox = React.createClass({
 	    handle: ".reorder-icon"
 	});
 	$(".reorder-icon").disableSelection();
+	$(".todo-item").hover(
+	    function(e) {
+		$(this).find(".reorder-icon").show();
+	    },
+	    function(e) {
+		$(this).find(".reorder-icon").hide();
+	    }
+	);
 
     },
     handleTodoSubmit: function(todo) {
@@ -194,9 +202,9 @@ var TodoItem = React.createClass({
 	var classes;
 
 	if (this.props.complete) {
-	    classes = "task complete";
+	    classes = "complete";
 	} else {
-	    classes = "task"
+	    classes = ""
 	}
 
 	return (
@@ -204,8 +212,8 @@ var TodoItem = React.createClass({
 		    <div className="todo-checkbox">
 		        <input checked={this.props.complete} onChange={this.props.onToggle} type="checkbox"/>
 		    </div>
-		    <div className={classes}>
-		        {this.props.task}
+		    <div className="task">
+		        <span className={classes}>{this.props.task}</span>
 		        <span className="glyphicon glyphicon-resize-vertical reorder-icon"></span>
 	            </div>
 		</div>
