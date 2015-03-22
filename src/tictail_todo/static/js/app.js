@@ -8,6 +8,25 @@ var TodoBox = React.createClass({
 	    unfinished: this.countUnfinishedItems(tasks)
 	});
     },
+    updateOrdering: function(ordering) {
+	var data = [];
+	for (var i=0; i < ordering.length; i++) {
+	    data.push({id: ordering[i], ordering: i});
+	}
+	$.ajax({
+	    url:this.props.url,
+	    dataType: 'json',
+	    contentType: 'application/json',
+	    type: 'PUT',
+	    data: JSON.stringify({tasks: data}),
+	    success: function(data) {
+		// No need to update anything.
+	    }.bind(this),
+	    error: function(data) {
+		console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+    },
     getInitialState: function() {
 	return {data: [], unfinished: 0};
     },
@@ -25,6 +44,18 @@ var TodoBox = React.createClass({
     },
     componentDidMount: function() {
 	this.loadTodosFromServer();
+    },
+    componentDidUpdate: function() {
+	var updateOrdering = this.updateOrdering
+	$("#todo-list").sortable({
+	    update: function(event, ui) {
+		var sortedIDs = $("#todo-list").sortable("toArray");
+		updateOrdering(sortedIDs);
+	    },
+	    handle: ".reorder-icon"
+	});
+	$(".reorder-icon").disableSelection();
+
     },
     handleTodoSubmit: function(todo) {
 	$.ajax({
@@ -141,9 +172,10 @@ var TodoList = React.createClass({
 	    var taskNodes = this.props.data.map(function (item) {
 		return (
 			<TodoItem
-		           task={item["task"]}
-		           key={item["id"]}
-		           complete={item["complete"]}
+		           task={item.task}
+		           id={item.id}
+		           key={item.id}
+		           complete={item.complete}
 		           onToggle={this.toggle.bind(this, item)}
 			/>
 		);
@@ -162,18 +194,19 @@ var TodoItem = React.createClass({
 	var classes;
 
 	if (this.props.complete) {
-	    classes = "complete";
+	    classes = "task complete";
 	} else {
-	    classes = ""
+	    classes = "task"
 	}
 
 	return (
-		<div className="todo-item">
+		<div className="todo-item" id={this.props.id}>
 		    <div className="todo-checkbox">
 		        <input checked={this.props.complete} onChange={this.props.onToggle} type="checkbox"/>
 		    </div>
 		    <div className={classes}>
 		        {this.props.task}
+		        <span className="glyphicon glyphicon-resize-vertical reorder-icon"></span>
 	            </div>
 		</div>
 	);

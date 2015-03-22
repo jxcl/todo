@@ -140,6 +140,9 @@ button#todo-input-button {
     padding: 20px;
 }
 
+.todo-item:hover {
+    .reorder-icon {visibility: visible}
+}
 
 .todo-checkbox {
     width: 20px;
@@ -174,6 +177,13 @@ div.clear {
 
 #mark-complete {
     margin-right: 20px;
+    float: right;
+}
+
+.task {
+}
+
+.reorder-icon {
     float: right;
 }
 
