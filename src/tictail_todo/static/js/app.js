@@ -20,7 +20,7 @@ var TodoBox = React.createClass({
 	    type: 'PUT',
 	    data: JSON.stringify({tasks: data}),
 	    success: function(data) {
-		// No need to update anything.
+		this.updateState(data);
 	    }.bind(this),
 	    error: function(data) {
 		console.error(this.props.url, status, err.toString());
@@ -51,6 +51,7 @@ var TodoBox = React.createClass({
 	    update: function(event, ui) {
 		var sortedIDs = $("#todo-list").sortable("toArray");
 		updateOrdering(sortedIDs);
+		$("#todo-list").sortable("cancel");
 	    },
 	    handle: ".reorder-icon"
 	});
@@ -63,7 +64,6 @@ var TodoBox = React.createClass({
 		$(this).find(".reorder-icon").hide();
 	    }
 	);
-
     },
     handleTodoSubmit: function(todo) {
 	$.ajax({
@@ -159,7 +159,10 @@ var TodoInput = React.createClass({
 		<div id="todo-input">
 		<form className="todo-input" onSubmit={this.handleSubmit}>
 		    <div id="todo-input-box">
-		        <input type="text" className="form-control" ref="todo" placeholder="What needs to be done?" />
+		        <input type="text"
+                               className="form-control"
+                               ref="todo"
+                               placeholder="What needs to be done?" />
 		    </div>
 		    <div id="todo-input-button">
 		        <button type="submit" id="todo-input-button" className="btn">Add Todo</button>
