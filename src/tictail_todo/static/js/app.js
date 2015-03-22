@@ -46,11 +46,14 @@ var TodoBox = React.createClass({
 	this.loadTodosFromServer();
     },
     componentDidUpdate: function() {
+	// Set up required jQuery-UI javascript calls and reorder icon hiding
 	var updateOrdering = this.updateOrdering
 	$("#todo-list").sortable({
 	    update: function(event, ui) {
 		var sortedIDs = $("#todo-list").sortable("toArray");
 		updateOrdering(sortedIDs);
+		// We can't mutate the DOM ourselves when using React. Cancel the
+		// reordering and let React figure it out.
 		$("#todo-list").sortable("cancel");
 	    },
 	    handle: ".reorder-icon"
@@ -103,6 +106,7 @@ var TodoBox = React.createClass({
 	});
     },
     allComplete: function(e) {
+	// Mark all tasks as complete
 	e.preventDefault();
 	var tasks = [];
 	for (var i = 0; i < this.state.data.length; i++) {
