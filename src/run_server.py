@@ -1,4 +1,21 @@
 #!/usr/bin/env python3
-from tictail_todo import app
+import argparse
+from os import path
+from tictail_todo import app, db
 
-app.run(host="0.0.0.0")
+def ensure_db_exists(db_path):
+    if not path.exists(db_path):
+        db.create_all()
+
+def main():
+    parser = argparse.ArgumentParser(description="Run the Todo server.")
+    parser.add_argument('db_path', type=str,
+                        help=("Path to the sqlite db file to use. The file will be created" +
+                              " if it does not exist."))
+    args = parser.parse_args()
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + args.db_path
+    ensure_db_exists(args.db_path)
+    app.run(host="0.0.0.0")
+
+if __name__ == "__main__":
+    main()
