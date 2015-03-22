@@ -1,3 +1,5 @@
+'use strict';
+
 var TodoBox = React.createClass({
     updateState: function(data) {
 	var tasks = data["tasks"];
@@ -61,6 +63,27 @@ var TodoBox = React.createClass({
 	    }.bind(this)
 	});
     },
+    allComplete: function(e) {
+	e.preventDefault();
+	var tasks = [];
+	for (var i = 0; i < this.state.data.length; i++) {
+	    var task = this.state.data[i];
+	    tasks.push({id: task.id, complete: true});
+	}
+	$.ajax({
+	    url: this.props.url,
+	    dataType: 'json',
+	    contentType: 'application/json',
+	    type: 'PUT',
+	    data: JSON.stringify({tasks: tasks}),
+            success: function(data) {
+		this.updateState(data);
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+		console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+    },
     countUnfinishedItems: function(data) {
 	var unfinished = 0;
 	for (var i = 0; i < data.length; i++) {
@@ -76,7 +99,7 @@ var TodoBox = React.createClass({
 		    <h1 id="todo-header">Todos</h1>
 		    <TodoInput onTodoSubmit={this.handleTodoSubmit} />
 		    <TodoList data={this.state.data} onToggle={this.toggleTodo}/>
-		    <TodoFooter itemsLeft={this.state.unfinished}/>
+		    <TodoFooter itemsLeft={this.state.unfinished} markall={this.allComplete}/>
 		</div>
 	);
     }
@@ -158,14 +181,21 @@ var TodoItem = React.createClass({
 });
 
 var TodoFooter = React.createClass({
+    pluralize: function(n) {
+	if (n == 1) {
+	    return "item";
+	} else {
+	    return "items";
+	}
+    },
     render: function() {
 	return (
 		<div id="todo-footer">
 		<div id="items-left">
-		{this.props.itemsLeft} items left
+		{this.props.itemsLeft} {this.pluralize(this.props.itemsLeft)} left
 		</div>
 		<div id="mark-complete">
-		<a href="#">Mark all as complete</a>
+		<a href="#" onClick={this.props.markall}>Mark all as complete</a>
 		</div>
 		<div className="clear"></div>
 		</div>
